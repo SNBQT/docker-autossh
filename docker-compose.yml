@@ -1,0 +1,35 @@
+version: '3.4'
+
+networks:
+  traefik:
+    external:
+      name: traefik
+
+services:
+  autossh:
+    build:
+      context: .
+    # image: jnovack/autossh
+    image: ansiyeah/docker-autossh
+    container_name: autossh
+    networks:
+      - traefik
+    environment:
+      - SSH_HOSTUSER=as
+      - SSH_HOSTNAME=ansi.space
+      - SSH_TUNNEL_REMOTE=2800
+      - SSH_TUNNEL_HOST=172.18.0.1
+      - SSH_TUNNEL_LOCAL=80
+      - SSH_HOSTPORT=2345
+      - SSH_M=2600
+    restart: always
+    command: "autossh -M 2620 \
+    -o StrictHostKeyChecking=no -o ServerAliveInterval=5 \
+    -o ServerAliveCountMax=1 -t -4 -i /id_rsa \
+    -NR 2800:172.18.0.1:80 -p 2345 as@ansi.space"
+    volumes:
+     - ./id_rsa:/id_rsa
+     - ./entrypoint.sh:/entrypoint.sh:Z
+    dns:
+     - 8.8.8.8
+     - 4.2.2.4
