@@ -1,18 +1,10 @@
-version: '3.4'
-
-networks:
-  traefik:
-    external:
-      name: traefik
+version: '2'
 
 services:
   autossh:
-    build:
-      context: .
+#    build:
+#      context: .
     image: ansiyeah/docker-autossh
-    container_name: autossh
-    networks:
-      - traefik
     environment:
       - SSH_HOSTUSER=as
       - SSH_HOSTNAME=ansi.space
