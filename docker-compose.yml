@@ -1,28 +1,41 @@
-version: '2'
+version: '3.4'
 
 services:
+  keras:
+    image: tensorflow/tensorflow:latest-gpu
+    #    runtime: nvidia
+    ports:
+      - ${SERVER_PORT}:8888
+    volumes:
+      - ./data:/notebooks
+    restart: always
+    environment:
+      - PASSWORD=${PASSWORD}
+
+    dns:
+     - 114.114.114.114
+     - 8.8.8.8
+
   autossh:
-#    build:
-#      context: .
+    # build:
+    #   context: .
     image: ansiyeah/docker-autossh
     environment:
-      - SSH_HOSTUSER=as
-      - SSH_HOSTNAME=ansi.space
-      - SSH_TUNNEL_REMOTE=2800
-      - SSH_TUNNEL_HOST=172.18.0.1
-      - SSH_TUNNEL_LOCAL=80
-      - SSH_HOSTPORT=2345
-      - SSH_M=2600
+      - SSH_HOSTUSER=${SSH_HOSTUSER}
+      - SSH_HOSTNAME=${SSH_HOSTNAME}
+      - SSH_TUNNEL_REMOTE=${SSH_TUNNEL_REMOTE}
+      - SSH_TUNNEL_HOST=${SSH_TUNNEL_HOST}
+      - SSH_TUNNEL_LOCAL=${SERVER_PORT}
+      - SSH_HOSTPORT=${SSH_HOSTPORT}
+      - SSH_M=${SSH_M}
     restart: always
     # command: "autossh -M 2620 \
     # -o StrictHostKeyChecking=no -o ServerAliveInterval=5 \
     # -o ServerAliveCountMax=1 -t -4 -i /id_rsa \
     # -NR 2800:172.18.0.1:80 -p 2345 as@ansi.space"
     volumes:
-     - ./id_rsa:/id_rsa
-     - ./entrypoint.sh:/entrypoint.sh:Z
+     - ~/.ssh/id_rsa:/id_rsa
+       # - ./entrypoint.sh:/entrypoint.sh:Z
     dns:
+     - 114.114.114.114
      - 8.8.8.8
-     - 4.2.2.4
-
-
